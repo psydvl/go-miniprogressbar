@@ -58,7 +58,7 @@ func Main(length int, total int) chan<- int {
 	if length == 0 {
 		length = 70
 	}
-	progress = ProgressBar{ch, total, length}
+	progress = ProgressBar{ch, length, total}
 	go pb(progress)
 	return ch
 }
@@ -72,7 +72,7 @@ func Simple(length int) chan<- int {
 	if length == 0 {
 		length = 70
 	}
-	var progress ProgressBar = ProgressBar{ch, 0, length}
+	var progress ProgressBar = ProgressBar{ch, length, 0}
 	go pb(progress)
 	return ch
 }
@@ -91,7 +91,7 @@ func Steps(length int, total int) chan<- bool {
 	if total <= 0 {
 		panic("Zero or negative total value provided")
 	}
-	progress = ProgressBar{ch, total, length}
+	progress = ProgressBar{ch, length, total}
 	go pb(progress)
 	go steps(ch_steps, ch)
 	return ch_steps
