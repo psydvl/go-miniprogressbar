@@ -1,3 +1,3 @@
-module github.com/psydvl/go-miniprogressbar
+module github.com/psydvl/goltools
 
 go 1.16
