@@ -16,11 +16,6 @@ type progressBar struct {
 	total int
 }
 
-type progressStep struct {
-	ch chan<- int
-	current int
-}
-
 // output example
 //
 // [■■■■■■■■■■■■■■■■■                                                     ] 1248/5000  6s spent
@@ -64,9 +59,13 @@ func (progress progressBar)iterate() {
 	)
 }
 
-func (progress *progressStep)step() {
-	progress.current = progress.current + 1
-	progress.ch <- progress.current
+func step(ch chan <-int) func() {
+	current := 0
+
+	return func() {
+		current += 1
+		ch <- current
+	}
 }
 
 /*
@@ -87,10 +86,12 @@ func Init(method string, length, total int) (interface{}, func()) {
 	var progress progressBar
 
 	if length == 0 {
-		length = (goltools.TerminalWidth() - 27) / 10 * 10
-	}
-	if length == 0 {
-		length = 70
+		terminalwidth := goltools.TerminalWidth()
+		if terminalwidth == 0 {
+			length = 70
+		} else {
+			length = (goltools.TerminalWidth() - 27) / 10 * 10
+		}
 	}
 
 	progress = progressBar{&wg, ch, length, total}
@@ -108,10 +109,9 @@ func Init(method string, length, total int) (interface{}, func()) {
 		if progress.total <= 0 {
 			panic(fmt.Sprintf("total variable is negative or zero, got: %d", progress.total))
 		}
-		step := progressStep{ch, 0}
 		wg.Add(1)
 		go progress.iterate()
-		result = step.step
+		result = step(ch)
 	default:
 		panic("progressbar: wrong method value; \"step\" or \"channel\" expected")
 	}
