@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/psydvl/goltools"
+	"github.com/psydvl/goltools/terminal"
 )
 
 type progressBar struct {
@@ -86,11 +86,11 @@ func Init(method string, length, total int) (interface{}, func()) {
 	var progress progressBar
 
 	if length == 0 {
-		terminalwidth := goltools.TerminalWidth()
+		terminalwidth := terminal.Width()
 		if terminalwidth == 0 {
 			length = 70
 		} else {
-			length = (goltools.TerminalWidth() - 27) / 10 * 10
+			length = (terminal.Width() - 27) / 10 * 10
 		}
 	}
 

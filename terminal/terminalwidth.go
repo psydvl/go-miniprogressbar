@@ -1,4 +1,4 @@
-package goltools
+package terminal
 
 import (
 	"os/exec"
@@ -6,8 +6,7 @@ import (
 	"strings"
 )
 
-//TODO: check in Powershell
-func TerminalWidth() (result int) {
+func Width() (result int) {
 	result = 0
 	out, err := exec.Command("tput", "cols").Output()
 	if err == nil {
